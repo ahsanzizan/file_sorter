@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/fsnotify/fsnotify"
 )
@@ -24,6 +25,11 @@ func NewFileSorter(configPath string) (*filesorter.FileSorter, error) {
 
 	var logger *log.Logger
 	if config.EnableLogging {
+		err := os.MkdirAll(filepath.Dir(config.LogFile), 0755)
+		if err != nil {
+			log.Fatalf("Failed to create log directory: %v", err)
+		}
+
 		logFile, err := os.OpenFile(config.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 		if err != nil {
 			return nil, fmt.Errorf("failed to open log file: %w", err)
