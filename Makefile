@@ -32,6 +32,43 @@ build-all:
 	
 	@echo "Multi-platform build complete!"
 
+# Build for Windows only
+build-windows:
+	@echo "Building for Windows..."
+	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	go build -o $(BUILD_DIR)/$(BINARY_NAME)-windows-amd64.exe $(MAIN_FILE)
+	@echo "Windows build complete: $(BUILD_DIR)/$(BINARY_NAME)-windows-amd64.exe"
+
+# Build for macOS only
+build-macos:
+	@echo "Building for macOS..."
+	@mkdir -p $(BUILD_DIR)
+	GOOS=darwin GOARCH=amd64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-amd64 $(MAIN_FILE)
+	GOOS=darwin GOARCH=arm64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-arm64 $(MAIN_FILE)
+	@echo "macOS build complete!"
+
+# Build for Linux only
+build-linux:
+	@echo "Building for Linux..."
+	@mkdir -p $(BUILD_DIR)
+	GOOS=linux GOARCH=amd64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-linux-amd64 $(MAIN_FILE)
+	GOOS=linux GOARCH=arm64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-linux-arm64 $(MAIN_FILE)
+	@echo "Linux build complete!"
+
+# Build with optimizations (smaller binary size)
+build-optimized:
+	@echo "Building optimized binary..."
+	@mkdir -p $(BUILD_DIR)
+	go build -ldflags="-s -w" -o $(BUILD_DIR)/$(BINARY_NAME)-optimized $(MAIN_FILE)
+	@echo "Optimized build complete: $(BUILD_DIR)/$(BINARY_NAME)-optimized"
+
+# Build with debug information
+build-debug:
+	@echo "Building debug binary..."
+	@mkdir -p $(BUILD_DIR)
+	go build -gcflags="all=-N -l" -o $(BUILD_DIR)/$(BINARY_NAME)-debug $(MAIN_FILE)
+	@echo "Debug build complete: $(BUILD_DIR)/$(BINARY_NAME)-debug"
+
 # Run the application
 run:
 	go run $(MAIN_FILE)
@@ -83,9 +120,14 @@ uninstall:
 # Show help
 help:
 	@echo "Available commands:"
-	@echo "  make build       - Build the application"
-	@echo "  make build-all   - Build for multiple platforms"
-	@echo "  make run         - Run the application"
+	@echo "  make build         - Build the application"
+	@echo "  make build-all     - Build for multiple platforms"
+	@echo "  make build-windows - Build for Windows only"
+	@echo "  make build-macos   - Build for macOS only"
+	@echo "  make build-linux   - Build for Linux only"
+	@echo "  make build-optimized - Build optimized binary (smaller size)"
+	@echo "  make build-debug   - Build with debug information"
+	@echo "  make run           - Run the application"
 	@echo "  make dry-run     - Run in dry-run mode"
 	@echo "  make config      - Generate default configuration"
 	@echo "  make deps        - Install dependencies"
@@ -97,4 +139,4 @@ help:
 	@echo "  make uninstall   - Remove from system PATH"
 	@echo "  make help        - Show this help"
 
-.PHONY: all build build-all run dry-run config deps clean test fmt lint install uninstall help
+.PHONY: all build build-all build-windows build-macos build-linux build-optimized build-debug run dry-run config deps clean test fmt lint install uninstall help
