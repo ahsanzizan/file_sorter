@@ -42,7 +42,7 @@ build-windows:
 # Build for macOS only
 build-macos:
 	@echo "Building for macOS..."
-	@mkdir -p $(BUILD_DIR)
+	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 	GOOS=darwin GOARCH=amd64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-amd64 $(MAIN_FILE)
 	GOOS=darwin GOARCH=arm64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-darwin-arm64 $(MAIN_FILE)
 	@echo "macOS build complete!"
@@ -50,7 +50,7 @@ build-macos:
 # Build for Linux only
 build-linux:
 	@echo "Building for Linux..."
-	@mkdir -p $(BUILD_DIR)
+	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 	GOOS=linux GOARCH=amd64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-linux-amd64 $(MAIN_FILE)
 	GOOS=linux GOARCH=arm64 go build -o $(BUILD_DIR)/$(BINARY_NAME)-linux-arm64 $(MAIN_FILE)
 	@echo "Linux build complete!"
@@ -58,14 +58,14 @@ build-linux:
 # Build with optimizations (smaller binary size)
 build-optimized:
 	@echo "Building optimized binary..."
-	@mkdir -p $(BUILD_DIR)
+	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 	go build -ldflags="-s -w" -o $(BUILD_DIR)/$(BINARY_NAME)-optimized $(MAIN_FILE)
 	@echo "Optimized build complete: $(BUILD_DIR)/$(BINARY_NAME)-optimized"
 
 # Build with debug information
 build-debug:
 	@echo "Building debug binary..."
-	@mkdir -p $(BUILD_DIR)
+	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 	go build -gcflags="all=-N -l" -o $(BUILD_DIR)/$(BINARY_NAME)-debug $(MAIN_FILE)
 	@echo "Debug build complete: $(BUILD_DIR)/$(BINARY_NAME)-debug"
 
